@@ -63,7 +63,7 @@ module.exports = function(grunt) {
         uglify: {}
     });
 
-    grunt.loadNpmTasks('grunt-contrib-less');
+    grunt.loadNpmTasks('grunt-contrib');
 
     // Default task.
     grunt.registerTask('default', 'lint min less');
