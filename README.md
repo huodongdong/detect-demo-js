@@ -14,3 +14,7 @@ To run the demo
 grunt watch server
 ```
 
+## License
+
+Released under the MIT license
+
