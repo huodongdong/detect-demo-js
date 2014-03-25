@@ -6,8 +6,8 @@
 
     // constants
     var API_URL = 'http://api.faceplusplus.com/';
-    var API_KEY = '2e7316b02a8ac15f07751511300520bf';
-    var API_SECRET = 'nIVeO-lLAv_1WBgZWssrc0IiOLiSDl4A';
+    var API_KEY = '0df565d6e2a56d30a100686779ada46f';
+    var API_SECRET = 'hO1Ox6df2oym7QKBb562_VRywxwHBj6d';
 
     // error messages
     var messages = {
