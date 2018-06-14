@@ -14,7 +14,7 @@ module.exports = function(grunt) {
       detect: {
         options: {
           keepalive: true,
-          port: 80
+          port: 8080
         }
       }
     },

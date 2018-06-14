@@ -6,8 +6,8 @@
 
     // constants
     var API_URL = 'https://api-cn.faceplusplus.com/facepp/v3';
-    var API_KEY = '';
-    var API_SECRET = '';
+    var API_KEY = '';//填写你的APIKey
+    var API_SECRET = '';//填写你的APISecret
 
     // error messages
     var messages = {
@@ -134,10 +134,10 @@
 
                     if (face.attributes.gender.value === 'Male') {
                         rgbColor = '#12BDDC';
-                        rgbaColor = 'rgba(18,189,220,0.8)';
+                        rgbaColor = 'rgba(0,255,0,0.8)';
                     } else {
-                        rgbColor = '#C537D8';
-                        rgbaColor = 'rgba(197,55,216,0.8)';
+                        rgbColor = '#FE007F';
+                        rgbaColor = 'rgba(255,0,0,0.8)';
                     }
 
                     var pointType = ['eye_left', 'eye_right', 'mouth_left', 'mouth_right'];
