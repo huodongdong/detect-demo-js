@@ -5,9 +5,9 @@
     'use strict';
 
     // constants
-    var API_URL = 'http://api.faceplusplus.com/';
-    var API_KEY = '0df565d6e2a56d30a100686779ada46f';
-    var API_SECRET = 'hO1Ox6df2oym7QKBb562_VRywxwHBj6d';
+    var API_URL = 'https://api-cn.faceplusplus.com/facepp/v3';
+    var API_KEY = '';
+    var API_SECRET = '';
 
     // error messages
     var messages = {
@@ -69,7 +69,7 @@
 
         var currentImg = new Image();
         var totalImageCount = 0;
-        var facesContainer = container.find('.faces'); // container for face boxes 
+        var facesContainer = container.find('.faces'); // container for face boxes
 
         function clearCanvas() {
             ctx.fillStyle = '#EEE';
@@ -122,7 +122,6 @@
          */
         function drawFaces(imageInfo, faces) {
             startLoading();
-
             if (faces.length === 0) {
                 showStatus(messages.NO_FACE);
             } else {
@@ -133,7 +132,7 @@
                     var rgbColor,
                         rgbaColor;
 
-                    if (face.attribute.gender.value === 'Male') {
+                    if (face.attributes.gender.value === 'Male') {
                         rgbColor = '#12BDDC';
                         rgbaColor = 'rgba(18,189,220,0.8)';
                     } else {
@@ -143,48 +142,50 @@
 
                     var pointType = ['eye_left', 'eye_right', 'mouth_left', 'mouth_right'];
 
+                    var scale = imageInfo.scale;
                     // draw facial pointType
-                    ctx.fillStyle = rgbColor;
-                    for (var j = pointType.length - 1; j >= 0; j--) {
-                        ctx.beginPath();
-                        ctx.arc(imageInfo.offsetX + face[pointType[j]].x * imageInfo.width * 0.01,
-                                imageInfo.offsetY + face[pointType[j]].y * imageInfo.height * 0.01,
-                                face.width * 0.01 * 6, 0, Math.PI * 2);
-                        ctx.fill();
-                    }
+                    // ctx.fillStyle = rgbColor;
+                    // for (var j = pointType.length - 1; j >= 0; j--) {
+                    //     ctx.beginPath();
+                    //     ctx.arc(imageInfo.offsetX + face[pointType[j]].x * imageInfo.width * 0.01,
+                    //             imageInfo.offsetY + face[pointType[j]].y * imageInfo.height * 0.01,
+                    //             face.width * 0.01 * 6, 0, Math.PI * 2);
+                    //     ctx.fill();
+                    // }
 
                     // create box for highlighting face region
+                    var roll = face.attributes.headpose.roll_angle;
                     $('<div/>').css({
                                 position: 'absolute',
-                                top: imageInfo.offsetY + (face.center.y - face.height / 2) * 0.01 * imageInfo.height - 5,
-                                left: imageInfo.offsetX + (face.center.x - face.width / 2) * 0.01 * imageInfo.width - 5,
-                                width: face.width * imageInfo.width * 0.01,
-                                height: face.height * imageInfo.height * 0.01,
-                                border: '5px solid ' + rgbColor,
+                                top: imageInfo.offsetY + face.face_rectangle.top * scale - 5,
+                                left: imageInfo.offsetX + face.face_rectangle.left * scale - 5,
+                                width: face.face_rectangle.width * scale,
+                                height: face.face_rectangle.height * scale,
+                                border: '2px solid ' + rgbColor,
                                 borderColor: rgbaColor,
-                                borderRadius: '10px'
+                                borderRadius: '2px',
+                                transform: 'rotate(' + roll + 'deg)'
                             }).
-                            qtip({
-                                content: '<table>' +
-                                             '<tr><td>width</td><td>'        + (face.width * 0.01).toFixed(2) + '</td></tr>' +
-                                             '<tr><td>height</td><td>'       + (face.height * 0.01).toFixed(2) + '</td></tr>' +
-                                             '<tr><td>center</td><td>('      + (face.center.x      * 0.01).toFixed(2) + ', ' + (face.center.y      * 0.01).toFixed(2) + ')</td></tr>' +
-                                             '<tr><td>eye_left</td><td>('    + (face.eye_left.x    * 0.01).toFixed(2) + ', ' + (face.eye_left.y    * 0.01).toFixed(2) + ')</td></tr>' +
-                                             '<tr><td>eye_right</td><td>('   + (face.eye_right.x   * 0.01).toFixed(2) + ', ' + (face.eye_right.y   * 0.01).toFixed(2) + ')</td></tr>' +
-                                             '<tr><td>mouth_left</td><td>('  + (face.mouth_left.x  * 0.01).toFixed(2) + ', ' + (face.mouth_left.y  * 0.01).toFixed(2) + ')</td></tr>' +
-                                             '<tr><td>mouth_right</td><td>(' + (face.mouth_right.x * 0.01).toFixed(2) + ', ' + (face.mouth_right.y * 0.01).toFixed(2) + ')</td></tr>' +
-                                             '<tr><td>race</td><td>'         + face.attribute.race.value + ' (' + face.attribute.race.confidence.toFixed(2) + '%)</td></tr>' +
-                                             '<tr><td>age</td><td>'          + face.attribute.age.value + ' (&#177;' + face.attribute.age.range + ')</td></tr>' +
-                                             '<tr><td>gender</td><td>'       + face.attribute.gender.value + ' (' + face.attribute.gender.confidence.toFixed(2) + '%)</td></tr>' +
-                                         '</table>',
-                                style: {
-                                    classes: 'detector-tooltip ui-tooltip-light ui-tooltip-tipify'
-                                },
-                                position: {
-                                    my: 'bottom center',
-                                    at: 'top center'
-                                }
-                            }).
+                            // qtip({
+                            //     content: '<table>' +
+                            //                  '<tr><td>width</td><td>'        + (face.face_rectangle.width).toFixed(2) + '</td></tr>' +
+                            //                  '<tr><td>height</td><td>'       + (face.face_rectangle.height).toFixed(2) + '</td></tr>' +
+                            //                  '<tr><td>center</td><td>('      + (face.center.x      * 0.01).toFixed(2) + ', ' + (face.center.y      * 0.01).toFixed(2) + ')</td></tr>' +
+                            //                  '<tr><td>eye_left</td><td>('    + (face.eye_left.x    * 0.01).toFixed(2) + ', ' + (face.eye_left.y    * 0.01).toFixed(2) + ')</td></tr>' +
+                            //                  '<tr><td>eye_right</td><td>('   + (face.eye_right.x   * 0.01).toFixed(2) + ', ' + (face.eye_right.y   * 0.01).toFixed(2) + ')</td></tr>' +
+                            //                  '<tr><td>mouth_left</td><td>('  + (face.mouth_left.x  * 0.01).toFixed(2) + ', ' + (face.mouth_left.y  * 0.01).toFixed(2) + ')</td></tr>' +
+                            //                  '<tr><td>mouth_right</td><td>(' + (face.mouth_right.x * 0.01).toFixed(2) + ', ' + (face.mouth_right.y * 0.01).toFixed(2) + ')</td></tr>' +
+                            //                  '<tr><td>age</td><td>'          + face.attribute.age.value + ' (&#177;' + face.attribute.age.range + ')</td></tr>' +
+                            //                  '<tr><td>gender</td><td>'       + face.attribute.gender.value + ' (' + face.attribute.gender.confidence.toFixed(2) + '%)</td></tr>' +
+                            //              '</table>',
+                            //     style: {
+                            //         classes: 'detector-tooltip ui-tooltip-light ui-tooltip-tipify'
+                            //     },
+                            //     position: {
+                            //         my: 'bottom center',
+                            //         at: 'top center'
+                            //     }
+                            // }).
                             appendTo(facesContainer);
                 }
             }
@@ -212,6 +213,7 @@
             currentImg.onload = function() {
                 var scale = Math.min(width / currentImg.width, height / currentImg.height, 1.0);
                 var imageInfo = {
+                    scale: scale,
                     width: currentImg.width * scale,
                     height: currentImg.height * scale,
                     offsetX: (width - currentImg.width * scale) / 2,
@@ -231,10 +233,7 @@
                     success: function(faces) {
                         if (currentImageCount === totalImageCount) {
                             // display "REST URL"
-                            var url = API_URL + 'detection/detect?api_key=' + API_KEY + '&api_secret=' + API_SECRET;
-                            if (!dataURI) {
-                                url += '&url=' + encodeURIComponent(currentImg.src);
-                            }
+                            var url = API_URL + '/detect'
                             showStatus(url);
 
                             var json = JSON.stringify(faces, null, '  ');
@@ -247,7 +246,7 @@
                                 container.find('.result').text(json);
                             }
 
-                            drawFaces(imageInfo, faces.face);
+                            drawFaces(imageInfo, faces.faces);
                         }
                     },
                     error: function() {
@@ -411,13 +410,18 @@
                 }
             };
 
-            if (options.type === 'url') {
-                xhr.open('GET', API_URL + 'detection/detect?api_key=' + API_KEY + '&api_secret=' + API_SECRET + '&url=' + encodeURIComponent(options.img), true);
-                xhr.send();
-            } else if (options.type === 'dataURI') {
-                xhr.open('POST', API_URL + 'detection/detect?api_key=' + API_KEY + '&api_secret=' + API_SECRET, true);
-                var fd = new FormData();
-                fd.append('img', dataURItoBlob(options.img));
+            var fd = new FormData();
+            fd.append('api_key', API_KEY);
+            fd.append('api_secret', API_SECRET);
+            fd.append('return_landmark', 1);
+            fd.append('return_attributes', 'gender,age,headpose');
+            if (options.type === 'dataURI') {
+                xhr.open('POST', API_URL + '/detect');
+                fd.append('image_file', dataURItoBlob(options.img));
+                xhr.send(fd);
+            }else if (options.type === 'url') {
+                xhr.open('POST', API_URL + '/detect');
+                fd.append('image_url', options.img);
                 xhr.send(fd);
             } else {
                 options.error();
@@ -425,7 +429,7 @@
         } else { // fallback to jsonp
             if (options.type === 'url') {
                 $.ajax({
-                    url: API_URL + 'detection/detect',
+                    url: API_URL + '/detect',
                     data: {
                         api_key: API_KEY,
                         api_secret: API_SECRET,
@@ -447,27 +451,10 @@
     $(function() {
         makeDetector(document.getElementById('detector'), {
             imgs: [
-                'http://faceplusplus.com/static/img/demo/1.jpg',
-                'http://faceplusplus.com/static/img/demo/2.jpg',
-                'http://faceplusplus.com/static/img/demo/3.jpg',
-                'http://faceplusplus.com/static/img/demo/4.jpg',
-                'http://faceplusplus.com/static/img/demo/5.jpg',
-                'http://faceplusplus.com/static/img/demo/6.jpg',
-                'http://faceplusplus.com/static/img/demo/7.jpg',
-                'http://faceplusplus.com/static/img/demo/8.jpg',
-                'http://faceplusplus.com/static/img/demo/9.jpg',
-                'http://faceplusplus.com/static/img/demo/10.jpg',
-                'http://faceplusplus.com/static/img/demo/11.jpg',
-                'http://faceplusplus.com/static/img/demo/12.jpg',
-                'http://faceplusplus.com/static/img/demo/13.jpg',
-                'http://faceplusplus.com/static/img/demo/14.jpg',
-                'http://faceplusplus.com/static/img/demo/15.jpg',
-                'http://faceplusplus.com/static/img/demo/16.jpg',
-                'http://faceplusplus.com/static/img/demo/17.jpg',
-                'http://faceplusplus.com/static/img/demo/18.jpg',
-                'http://faceplusplus.com/static/img/demo/19.jpg',
-                'http://faceplusplus.com/static/img/demo/20.jpg',
-                'http://faceplusplus.com/static/img/demo/21.jpg'
+                'https://www.faceplusplus.com.cn/scripts/demoScript/images/demo-pic1.jpg',
+                'https://www.faceplusplus.com.cn/scripts/demoScript/images/demo-pic10.jpg',
+                'https://www.faceplusplus.com.cn/scripts/demoScript/images/demo-pic8.jpg',
+                'https://www.faceplusplus.com.cn/scripts/demoScript/images/demo-pic6.jpg'
             ]
         });
     });
